@@ -4,8 +4,14 @@ const request = require('request')
 // 自动匹配运单号所属的物流公司
 function autoComNumber(orderno) {
   const url = `https://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text=${orderno}`
+  const options={
+    url,
+    headers:{
+      'User-Agent':'Mozilla/5.0(Windows NT 10.0;WOW64) AppleWebKit/537.36(KHTML,like Gecko) Chrome/86.0.4195.1 Safari/537.36',
+    },
+  }
   return new Promise(function(resolve, reject) {
-    request(url, (err, response, body) => {
+    request(options, (err, response, body) => {
       if (err) return reject({ status: 500, msg: err.message })
       // resolve(body)
       // console.log(body.num)

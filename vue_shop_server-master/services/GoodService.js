@@ -134,8 +134,6 @@ function generateGoodInfo(params) {
 		}
 		
 		info["is_promote"] = info["is_promote"] ? info["is_promote"] : false;
-
-		info["goods_introduce"] = params.goods_introduce
 		
 		resolve(info);
 	});
@@ -555,7 +553,7 @@ module.exports.getAllGoods = function(params,cb) {
 		// 构建条件
 		conditions["offset"] = offset;
 		conditions["limit"] = limit;
-		conditions["only"] = ["goods_id","goods_name","goods_price","goods_weight","goods_state","add_time","goods_number","upd_time","hot_mumber","is_promote","goods_introduce"];
+		conditions["only"] = ["goods_id","goods_name","goods_price","goods_weight","goods_state","add_time","goods_number","upd_time","hot_mumber","is_promote"];
 		conditions["order"] = "-add_time";
 
 
@@ -565,7 +563,7 @@ module.exports.getAllGoods = function(params,cb) {
 			resultDta["total"] = count;
 			resultDta["pagenum"] = pagenum;
 			resultDta["goods"] = _.map(goods,function(good){
-				return _.omit(good,"is_del","goods_big_logo","goods_small_logo","delete_time");
+				return _.omit(good,"goods_introduce","is_del","goods_big_logo","goods_small_logo","delete_time");
 			});
 			cb(err,resultDta);
 		})
