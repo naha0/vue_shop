@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 // const login = () => import('../components/login.vue')
 import login from '../components/login.vue'
 import home from '../components/home.vue'
+import welcome from '../components/welcome.vue'
+import users from '../components/user/users.vue'
 
 Vue.use(VueRouter)
 
@@ -14,25 +16,35 @@ const routes = [{
 	{
 		path: '/login',
 		component: login
-	},{
-		path:'/home',
-		component: home
+	}, {
+		path: '/home',
+		component: home,
+		children: [{
+			path:'',
+			redirect:'welcome',
+		},{
+			path: 'welcome',
+			component: welcome,
+		},{
+			path:'users',
+			component:users
+		}]
 	}
 ]
 
 const router = new VueRouter({
 	routes,
-	mode:'history'
+	mode: 'history'
 })
 
 // 挂载路由导航守卫
 router.beforeEach((to, from, next) => {
 	// 访问登录页，放行
-	if(to.path === '/login') return next()
+	if (to.path === '/login') return next()
 	// 获取token
 	const tokenStr = window.sessionStorage.getItem('token')
 	// 没有token，强制跳转到登录页
-	if(!tokenStr) return next('/login')
+	if (!tokenStr) return next('/login')
 	next()
 })
 
