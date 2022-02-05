@@ -48,7 +48,8 @@
 								@click="showDelete(scope.row.id)"></el-button>
 						</el-tooltip>
 						<el-tooltip class="item" effect="dark" content="管理" placement="top">
-							<el-button type="warning" icon="el-icon-setting" size='small'></el-button>
+							<el-button type="warning" icon="el-icon-setting" size='small'
+								@click="controlRole(scope.row)"></el-button>
 						</el-tooltip>
 					</template>
 				</el-table-column>
@@ -101,7 +102,26 @@
 				<el-button type="primary" @click="editUserInfo">确 定</el-button>
 			</span>
 		</el-dialog>
-		
+
+
+
+		<el-dialog title="分配角色" :visible.sync="controlDialogVisible" @close="controlDialogClosed" width="30%">
+			<div ref="controlRef">
+				<p>当前的用户:   {{controlUserInfo.username}}</p>
+				<p>当前的角色:   {{controlUserInfo.role_name}}</p>
+				<p>分配新角色:
+					<el-select v-model="setlectRoleId" placeholder="请选择">
+						<el-option v-for="item in options[0]" :key="item.id" :label="item.roleName" :value="item.id"
+							:disabled="item.disabled">
+						</el-option>
+					</el-select>
+				</p>
+			</div>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="controlDialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="controlUser">确 定</el-button>
+			</span>
+		</el-dialog>
 
 	</div>
 
@@ -144,6 +164,14 @@
 				addDialogVisible: false,
 				// 控制修改用户的对话框的显示与隐藏
 				editDialogVisible: false,
+				// 控制管理用户的对话框的显示与隐藏,
+				controlDialogVisible: false,
+				// 保存管理用户的数据
+				controlUserInfo: {},
+				// 保存管理用户权限的数据
+				options:[],
+				// 管理用户权限中select中已选择的id值
+				setlectRoleId:'',
 				// 添加用户的表单数据
 				addUserForm: {
 					username: '',
@@ -152,10 +180,10 @@
 					mobile: ''
 				},
 				//查询到的用户信息对象
-				editUserForm:{
-					username:'',
-					email:'',
-					mobile:''
+				editUserForm: {
+					username: '',
+					email: '',
+					mobile: ''
 				},
 				// 添加表单的验证规则对象
 				addUserFormRules: {
@@ -268,18 +296,20 @@
 					this.addDialogVisible = false
 					// 重新获取用户列表
 					this.getUserList()
-					console.log(res)
+					// console.log(res)
 				})
 			},
 			// 监听修改用户对话框的关闭
-			editDialogClosed(){
+			editDialogClosed() {
 				this.$refs.editUserFormRef.resetFields()
 			},
 			// 展示修改的对话框
 			async showEditDialog(id) {
 				this.editDialogVisible = true
-				const {data:res} = await this.$http.get(`users/${id}`)
-				if(res.meta.status !== 200){
+				const {
+					data: res
+				} = await this.$http.get(`users/${id}`)
+				if (res.meta.status !== 200) {
 					return this.$message.error('获取失败')
 				}
 				this.$message.success('获取成功')
@@ -289,17 +319,18 @@
 				this.editUserForm.mobile = res.data.mobile
 				// console.log(res)
 			},
-			editUserInfo(){
-				this.$refs.editUserFormRef.validate(async valid=>{
-					if(!valid) return false
+			editUserInfo() {
+				this.$refs.editUserFormRef.validate(async valid => {
+					if (!valid) return false
 					// 发起修改用户信息的数据请求
-					const {data:res} = await this.$http.put('users/'+ this.editUserForm.id,
-					{
-						email:this.editUserForm.email,
-						mobile:this.editUserForm.mobile
+					const {
+						data: res
+					} = await this.$http.put('users/' + this.editUserForm.id, {
+						email: this.editUserForm.email,
+						mobile: this.editUserForm.mobile
 					})
 					// console.log(res)
-					if(res.meta.status !== 200){
+					if (res.meta.status !== 200) {
 						return this.$message.error('修改失败')
 					}
 					this.$message.success('修改成功')
@@ -308,26 +339,55 @@
 				})
 			},
 			// 根据id删除对应的用户信息
-			async showDelete(id){
+			async showDelete(id) {
 				// 弹框用户是否删除数据
 				const confirmResult = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
-				          confirmButtonText: '确定',
-				          cancelButtonText: '取消',
-				          type: 'warning'
-				        }).catch((err)=>{
-							return err
-						})
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).catch((err) => {
+					return err
+				})
 				// 如果用户确认删除，则返回值为字符串 confirm
 				// 如果用户取消删除，则返回值为字符串 cancel
-				if(confirmResult !== 'confirm'){
+				if (confirmResult !== 'confirm') {
 					return this.$message.info('已取消删除')
 				}
-				const {data:res} = await this.$http.delete(`users/${id}`)
-				if(res.meta.status === 200){
+				const {
+					data: res
+				} = await this.$http.delete(`users/${id}`)
+				if (res.meta.status === 200) {
 					this.$message.success('删除用户成功')
 				}
 				this.getUserList()
 				console.log(res)
+			},
+			// 管理角色权限的对话框
+			async controlRole(userinfo) {
+				this.controlDialogVisible = true
+				this.controlUserInfo = userinfo
+				const {data:res} = await this.$http.get('roles')
+				if(res.meta.status !== 200){
+					return this.$message.error('获取用户权限失败')
+				}
+				console.log('111111',this.controlUserInfo)
+				this.options.push(res.data)
+				console.log(this.options)
+
+
+			},
+			controlDialogClosed() {
+				// this.$refs.controlRef.resetFields()
+			},
+			async controlUser(){
+				const {data:res} = await this.$http.put('users/'+this.controlUserInfo.id+'/role',{rid:this.setlectRoleId})
+				// const {data:res} = await this.$http.put(`users/${this.controlUserInfo.id}/role`,{rid:this.setlectRoleId})
+				// console.log(res)
+				if(res.meta.status !== 200){
+					return this.$message.error('管理用户权限失败')
+				}
+				this.getUserList()
+				this.controlDialogVisible = false
 			}
 		}
 	}
