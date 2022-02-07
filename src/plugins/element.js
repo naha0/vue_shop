@@ -30,7 +30,8 @@ import {
 	Tree,
 	Divider,
 	Select,
-	Option
+	Option,
+	Cascader,
 	
 } from 'element-ui'
 
@@ -64,3 +65,4 @@ Vue.use(Tree)
 Vue.use(Divider)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Cascader)

@@ -6,6 +6,8 @@ import './plugins/element.js'
 // 导入全局样式表
 import './assets/css/global.css'
 
+// 导入插件
+import TreeTable from 'vue-table-with-tree-grid'
 
 
 // 添加到vue.prototype.$http后,可以在每一个组件上通过this.$http获取axios 
@@ -24,6 +26,8 @@ Vue.prototype.$http = axios
 
 
 Vue.config.productionTip = false
+
+Vue.component('tree-table',TreeTable)
 
 new Vue({
   router,
