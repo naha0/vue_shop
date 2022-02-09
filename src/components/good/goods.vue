@@ -181,7 +181,7 @@
 				// console.log('1111',res)
 				// console.log(this.queryInfo)
 				this.categorysList = res.data.result
-				console.log('33333', this.categorysList)
+				// console.log('33333', this.categorysList)
 				this.total = res.data.total
 			},
 			// pageSize 每页条数改变时会触发
@@ -213,7 +213,8 @@
 				}
 				this.$message.success('获取父级分类数据成功')
 				this.parentCategoryForm = res.data
-				console.log(res)
+				console.log('parentCategoryForm',this.parentCategoryForm)
+				// console.log(res)
 			},
 			// 级联选择器的change
 			handleChange() {
@@ -247,7 +248,7 @@
 					this.getCategory()
 				})
 
-				// console.log('1111', this.selectedKeys)
+				console.log('selectedKeys', this.selectedKeys)
 				// console.log(this.addCategoryForm)
 			},
 			// 根据id查询分类
