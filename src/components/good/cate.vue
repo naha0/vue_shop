@@ -85,7 +85,7 @@
 
 <script>
 	export default {
-		name: 'goods',
+		name: 'categories',
 		data() {
 			return {
 				categorysList: [],
